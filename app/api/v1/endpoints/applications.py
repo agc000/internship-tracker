@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List
-
+from fastapi import Query
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlmodel import select
@@ -30,11 +30,23 @@ def create_application(
     return application
 
 
+from fastapi import Query
+
 @router.get("", response_model=List[Application], dependencies=[Depends(verify_api_key)])
-def list_applications(session: Session = Depends(get_session)):
-    stmt = select(Application).order_by(Application.id.desc())
+def list_applications(
+    session: Session = Depends(get_session),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=100),
+):
+    stmt = (
+        select(Application)
+        .order_by(Application.id.desc())
+        .offset(skip)
+        .limit(limit)
+    )
     result = session.execute(stmt)
     return result.scalars().all()
+
 
 
 @router.get("/{id}", response_model=Application, dependencies=[Depends(verify_api_key)])
