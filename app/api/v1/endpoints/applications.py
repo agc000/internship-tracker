@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from enum import Enum
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlmodel import select
 
@@ -10,6 +12,18 @@ from app.models.application import Application
 from app.schemas.application import ApplicationCreate, ApplicationUpdate
 
 router = APIRouter(prefix="/applications", tags=["applications"])
+
+
+class SortOrder(str, Enum):
+    asc = "asc"
+    desc = "desc"
+
+
+class ApplicationSortField(str, Enum):
+    id = "id"
+    applied_date = "applied_date"
+    company = "company"
+    status = "status"
 
 
 @router.post("", response_model=Application, dependencies=[Depends(verify_api_key)])
@@ -29,9 +43,6 @@ def create_application(
     return application
 
 
-from fastapi import Query
-from typing import Optional
-
 @router.get("", response_model=List[Application], dependencies=[Depends(verify_api_key)])
 def list_applications(
     session: Session = Depends(get_session),
@@ -39,6 +50,8 @@ def list_applications(
     limit: int = Query(50, ge=1, le=100),
     status: Optional[str] = Query(None),
     company: Optional[str] = Query(None),
+    sort_by: ApplicationSortField = ApplicationSortField.id,
+    order: SortOrder = SortOrder.desc,
 ):
     stmt = select(Application)
 
@@ -48,12 +61,15 @@ def list_applications(
     if company:
         stmt = stmt.where(Application.company == company)
 
-    stmt = stmt.order_by(Application.id.desc()).offset(skip).limit(limit)
+    sort_column = getattr(Application, sort_by.value)
+    stmt = stmt.order_by(
+        sort_column.asc() if order == SortOrder.asc else sort_column.desc()
+    )
+
+    stmt = stmt.offset(skip).limit(limit)
 
     result = session.execute(stmt)
     return result.scalars().all()
-
-
 
 
 @router.get("/{id}", response_model=Application, dependencies=[Depends(verify_api_key)])
