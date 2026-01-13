@@ -100,6 +100,7 @@ def update_application(
     return application
 
 
+
 @router.delete("/{id}", dependencies=[Depends(verify_api_key)])
 def delete_application(id: int, session: Session = Depends(get_session)):
     application = session.get(Application, id)
