@@ -6,7 +6,8 @@ from alembic import context
 from sqlmodel import SQLModel
 
 from app.core.config import get_settings
-import app.models  # ensures models are imported and registered
+from app.models.application import Application
+
 
 
 # Alembic Config object
