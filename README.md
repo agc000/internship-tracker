@@ -14,6 +14,7 @@ Designed as a production ready backend service consumed by SwaggerUI, cmd-line t
 - **Pydantic** — request/response validation
 - **Docker** — local database environment
 - **Uvicorn** — ASGI server
+- **Railway** - Cloud Deployment with API + Postgres
  ---
 
 ## Features
@@ -25,6 +26,12 @@ Designed as a production ready backend service consumed by SwaggerUI, cmd-line t
 - Sorting with enum-based validation
 - Automatic request validation and error handling
 - Swagger UI for interactive testing
+---
+## Deployment 
+This service utilizes Railway deployment managed with a PostgreSQL database
+Live Url: https://web-production-d9381.up.railway.app/docs
+
+
 
 ---
 ## Running the Project Local
