@@ -29,7 +29,7 @@ Designed as a production ready backend service consumed by SwaggerUI, cmd-line t
 ---
 ## Deployment 
 This service utilizes Railway deployment managed with a PostgreSQL database
-Live Url: https://web-production-d9381.up.railway.app/docs
+- Live Url: https://web-production-d9381.up.railway.app/docs
 
 
 
